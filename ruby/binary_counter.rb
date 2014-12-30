@@ -4,12 +4,7 @@ require 'sinatra'
 require 'pi_piper'
 
 class Flasher < Sinatra::Base
-  @@pins = [
-    PiPiper::Pin.new(pin: 22, direction: :out),
-    PiPiper::Pin.new(pin: 18, direction: :out),
-    PiPiper::Pin.new(pin: 17, direction: :out),
-    PiPiper::Pin.new(pin: 4, direction: :out)
-  ]
+  @@pins = [ 4, 17, 18, 22, 25 ].map { |v| PiPiper::Pin.new(pin: v, direction: :out) }
 
   get '/' do
     'Hello'
@@ -28,7 +23,7 @@ class Flasher < Sinatra::Base
   end
 
   def binarise number
-    pattern = ("%04b" % number)[0...4]
+    pattern = ("%08b" % number).split('').reverse[0...@@pins.count].reverse
 
     pattern.length.times do |index|
       i = index - 1
